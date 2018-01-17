@@ -1,35 +1,67 @@
 class objNode {
     constructor(oRoot,
-                oPath='',
-                searchStr='',) {
+                oPath = '',
+                searchStr = '',) {
         this.searchStr = searchStr;
         this.oRoot = oRoot;
         this.oPath = oPath;
-        this.oPathAry = this.oPath.split('.');
-        this.oPathTempKeyAry = this.oPathAry;
-        this.oPathTempKey = this.oPathTempKeyAry.map(x => `[${x}]`).join('');
-        this.oPathTempValue = this.oPathTempKeyAry.length ? this.getValue(this.oPathAry) : this.oRoot;
+        this.oPathAry = this.oPath ? this.oPath.split('.') : [];
         this.matchedByKeyMap = new Map();
         this.matchedByValueMap = new Map();
         this.oPathHistorySet = new Set();
     }
 
-    getValue(pathAry = this.oPathTempKeyAry) {
-        if(pathAry.some(x=>!x)) return this.oRoot;
+    genPathKeyAry(pathStr, ctx) {
+        const resAry = [];
+        if (!pathStr || typeof pathStr !== 'string') {
+            return resAry;
+        }
+        else if (!/[\.\[\]]/.test(pathStr)) {
+            resAry.push(pathStr);
+        } else {
+            const subRegDotStr = `\\.([^\\[\\.]+)`;
+            const subRegSquareStr = `\\[([^\\].]+)]`;
+            const reg = new RegExp(`(?:${subRegSquareStr}|${subRegDotStr})`, 'g');
+            pathStr.replace(reg, (...args) => {
+                let key;
+                if (!(!!args[1] ^ !!args[2])) throw `args[1]和args[2]转化为boolean不应同真同假`;
+                if (args[1]) {
+                    try {
+                        key = this.getValueByStrInContext(args[1], ctx);
+                    } catch (e) {
+                        key = undefined;
+                    }
+                    console.log(key, 202020);
+                } else if (args[2]) {
+                    key = args[2]
+                }
+                resAry.push(key);
+            });
+        }
+        return resAry;
+    }
+
+    getValueByStrInContext(exp, ctx) { //根据属性名字符串exp获取上下文ctx中的值
+        console.log(exp, `747474 index.js`);
+        console.log(ctx, '757575 index.js');
+        const fn = new Function(...Object.keys(ctx), `return ${exp}`)(...Object.values(ctx));
+        console.log(1988, ctx);
+        return new Function(...Object.keys(ctx), `return ${exp}`)(...Object.values(ctx));
+    }
+
+    getValue(tailPath, ctx) {
+        const tailPathKeyAry = this.genPathKeyAry(tailPath, ctx);
+        console.log(tailPathKeyAry, `535353 index.js`);
+        const concatedPathKeyAry = [].concat(this.oPathAry).concat(tailPathKeyAry);
+        console.log(concatedPathKeyAry, `565656 index.js`);
+        if (concatedPathKeyAry.some(x => !x && x !== 0)) return this.oRoot;
         try {
-            return pathAry.reduce((p, n) => {
+            return concatedPathKeyAry.reduce((p, n) => {
                 return p[n]
             }, this.oRoot);
         } catch (e) {
             return undefined;
         }
-    }
-
-    oPathTempUpdate(subKey) {
-        if(subKey || subKey === 0) this.oPathTempKeyAry.push(subKey);
-        this.oPathTempKey = this.oPathTempKeyAry.map(x => `[${x}]`).join('')
-        console.log(this.oPathTempKey, 313131);
-        this.oPathTempValue = this.getValue(this.oPathTempKeyAry);
     }
 
     toLowerCase(str) {
@@ -53,13 +85,14 @@ class objNode {
         return new RegExp(subStr).test(str);
     }
 
-    handleByValue() {
-        if(this.oPathHistorySet.has(this.oPathTempKey)){
+    handleByValue(tmpKeyAry = this.oPathAry, item = this.getValue()) {
+        const joinedTmpKey = tmpKeyAry.map(x => `[${x}]`).join('')
+        if (this.oPathHistorySet.has(joinedTmpKey)) {
             return void 0;
-        }else{
-            this.oPathHistorySet.add(this.oPathTempKey);
+        } else {
+            this.oPathHistorySet.add(joinedTmpKey);
         }
-        switch (this.getType(this.oPathTempValue)) {
+        switch (this.getType(item)) {
             case 'String':
             case 'Number':
             case 'Boolean':
@@ -68,81 +101,61 @@ class objNode {
             case 'Symbol':
             case 'Map':
             case 'Set':
-                if (this.checkStrIfMatch(this.oPathTempValue, this.searchStr)) {
+                if (this.checkStrIfMatch(item, this.searchStr)) {
                     this.matchedByValueMap.set(
-                        this.oPathTempKey,
-                        this.oPathTempValue
+                        joinedTmpKey,
+                        item
                     );
                 }
                 break;
-            // this.oPathTempKeyAry = this.oPathAry; //将this.oPathTempKeyAry还原到初始状态
-            // 触碰到一个叶节点之后是不是有栈的方式来回到上衣层或者那一层更合适，这个要好好想一想。
-            // 还要考虑如何开始下一个节点处理周期
             case 'Array':
-                this.travelAry(this.oPathTempValue);
+                this.travelAry(tmpKeyAry, item);
                 break;
             case 'Object':
-                this.travelObj(this.oPathTempValue);
+                this.travelObj(tmpKeyAry, item);
                 break;
             case 'default':
                 return void 0;
         }
-        this.oPathTempKeyAry.pop();
-        this.oPathTempUpdate();
     }
 
-    travelAry(ary) {
-        console.log(ary, 83, '838383');
-        console.log(this.oPathTempKeyAry, 939393);
+    travelAry(tmpKeyAry, ary) {
         ary.forEach((item, key) => {
-            console.log(this.oPathTempKeyAry, 949494);
-            this.oPathTempUpdate(key);
-            console.log(this.oPathTempKeyAry, 959595);
-            console.log(this.oPathHistorySet, 969696);
-            this.handleByValue();
-            // this.oPathTempKeyAry.pop();
-            // this.oPathTempUpdate();
+            tmpKeyAry.push(key);
+            this.handleByValue(tmpKeyAry, item);
+            tmpKeyAry.pop();
         })
     }
 
-    travelObj(obj) {
-        console.log(obj, 94, '949494');
+    travelObj(tmpKeyAry, obj) {
         const keys = Object.keys(obj);
         keys.forEach((key) => {
-            this.oPathTempUpdate(key);
-            this.handleByValue();
-            // this.oPathTempKeyAry.pop();
-            // this.oPathTempUpdate();
+            const item = obj[key];
+            tmpKeyAry.push(key);
+            this.handleByValue(tmpKeyAry, item);
+            tmpKeyAry.pop();
         })
     }
-    //
-    // search() {
-    //     const keys = Object.keys(this.oRoot);
-    //     keys.forEach((oRootkey) => {
-    //         const oRootProp = this.oRoot[oRootkey];
-    //         this.handleByValue();
-    //     });
-    // }
 
     getOutputMatched() {
         let outputStr = ``;
-
         outputStr += 'By value:\n';
-
         this.matchedByValueMap.forEach(function (value, key) {
             outputStr += `  ${key}: ${value}\n`;
         });
-
         outputStr += '----------------------------\n';
-
         outputStr += 'By key:\n';
-
         this.matchedByKeyMap.forEach(function (value, key) {
             outputStr += `${key}: ${value}`;
         });
-        // console.log(outputStr);
+        outputStr += '----------------------------\n';
+        outputStr += `History Set:\n`;
+        this.oPathHistorySet.forEach(function (value) {
+        })
         return outputStr;
     }
 }
 
-module.exports = objNode;
+module.exports = {
+    objNode
+};

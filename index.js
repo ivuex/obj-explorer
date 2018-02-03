@@ -1,7 +1,10 @@
 class objNode {
+    //构造函数中的oPath参数 不支持 中括号字符串 预引用变量, 如有需要可以不传， 在后面的oPath中以这种方式传入;
     constructor(oRoot,
                 oPath = '',
-                searchStr = '',) {
+                searchStr = '',
+                sortSeq = 'value') {
+        this.sortSeq = sortSeq;
         this.searchStr = searchStr;
         this.oRoot = oRoot;
         this.oPath = oPath;
@@ -19,8 +22,8 @@ class objNode {
         else if (!/[\.\[\]]/.test(pathStr)) {
             resAry.push(pathStr);
         } else {
-            const subRegDotStr = `\\.([^\\[\\.]+)`;
             const subRegSquareStr = `\\[([^\\].]+)]`;
+            const subRegDotStr = `(?:^|\\.)([^\\[\\.]+)`;
             const reg = new RegExp(`(?:${subRegSquareStr}|${subRegDotStr})`, 'g');
             pathStr.replace(reg, (...args) => {
                 let key;
@@ -31,7 +34,6 @@ class objNode {
                     } catch (e) {
                         key = undefined;
                     }
-                    console.log(key, 202020);
                 } else if (args[2]) {
                     key = args[2]
                 }
@@ -42,18 +44,13 @@ class objNode {
     }
 
     getValueByStrInContext(exp, ctx) { //根据属性名字符串exp获取上下文ctx中的值
-        console.log(exp, `747474 index.js`);
-        console.log(ctx, '757575 index.js');
-        const fn = new Function(...Object.keys(ctx), `return ${exp}`)(...Object.values(ctx));
-        console.log(1988, ctx);
         return new Function(...Object.keys(ctx), `return ${exp}`)(...Object.values(ctx));
     }
 
     getValue(tailPath, ctx) {
+        if (ctx == undefined) ctx = {};
         const tailPathKeyAry = this.genPathKeyAry(tailPath, ctx);
-        console.log(tailPathKeyAry, `535353 index.js`);
         const concatedPathKeyAry = [].concat(this.oPathAry).concat(tailPathKeyAry);
-        console.log(concatedPathKeyAry, `565656 index.js`);
         if (concatedPathKeyAry.some(x => !x && x !== 0)) return this.oRoot;
         try {
             return concatedPathKeyAry.reduce((p, n) => {
@@ -85,13 +82,36 @@ class objNode {
         return new RegExp(subStr).test(str);
     }
 
-    handleByValue(tmpKeyAry = this.oPathAry, item = this.getValue()) {
-        const joinedTmpKey = tmpKeyAry.map(x => `[${x}]`).join('')
-        if (this.oPathHistorySet.has(joinedTmpKey)) {
+    searchHistoryRecord(joinedKeyStr) {
+        if (this.oPathHistorySet.has(joinedKeyStr)) {
             return void 0;
         } else {
-            this.oPathHistorySet.add(joinedTmpKey);
+            this.oPathHistorySet.add(joinedKeyStr);
         }
+    }
+
+    travelAry(tmpKeyAry, ary) {
+        ary.forEach((item, key) => {
+            tmpKeyAry.push(key);
+            this.handle(tmpKeyAry, item);
+            tmpKeyAry.pop();
+        })
+    }
+
+    travelObj(tmpKeyAry, obj) {
+        const keys = Object.keys(obj);
+        keys.forEach((key) => {
+            const item = obj[key];
+            tmpKeyAry.push(key);
+            this.handle(tmpKeyAry, item);
+            tmpKeyAry.pop();
+        })
+    }
+
+    // handleByValue(tmpKeyAry = this.oPathAry, item = this.getValue()) {
+    handleByValue(tmpKeyAry, item) {
+        const joinedTmpKey = tmpKeyAry.map(x => `[${x}]`).join('')
+        this.searchHistoryRecord(joinedTmpKey);
         switch (this.getType(item)) {
             case 'String':
             case 'Number':
@@ -119,39 +139,61 @@ class objNode {
         }
     }
 
-    travelAry(tmpKeyAry, ary) {
-        ary.forEach((item, key) => {
-            tmpKeyAry.push(key);
-            this.handleByValue(tmpKeyAry, item);
-            tmpKeyAry.pop();
-        })
+    // handleByKey(tmpKeyAry = this.oPathAry, item = this.getValue()) {
+    handleByKey(tmpKeyAry, item) {
+        const joinedTmpKey = tmpKeyAry.map(x => `[${x}]`).join('')
+        this.searchHistoryRecord(joinedTmpKey);
+        if (this.checkStrIfMatch(joinedTmpKey, this.searchStr)) {
+            this.matchedByKeyMap.set(
+                joinedTmpKey,
+                item
+            );
+        }
+        switch (this.getType(item)) {
+            case 'Array':
+                this.travelAry(tmpKeyAry, item);
+                break;
+            case 'Object':
+                this.travelObj(tmpKeyAry, item);
+                break;
+        }
     }
 
-    travelObj(tmpKeyAry, obj) {
-        const keys = Object.keys(obj);
-        keys.forEach((key) => {
-            const item = obj[key];
-            tmpKeyAry.push(key);
-            this.handleByValue(tmpKeyAry, item);
-            tmpKeyAry.pop();
-        })
+
+    handle(tmpKeyAry = this.oPathAry, item = this.getValue(), sortSeq = this.sortSeq) {
+        if (!item) item = this.getValue; //item 可传入null占位
+        if (!tmpKeyAry) tmpKeyAry = this.oPathAry;  //tmpKeyAry 可传入null占位
+        switch (sortSeq) {
+            case 'key':
+                this.handleByKey(tmpKeyAry, item);
+                break;
+            case this.sortSeq:
+            default:
+                this.handleByValue(tmpKeyAry, item);
+                break;
+        }
     }
 
     getOutputMatched() {
         let outputStr = ``;
+        outputStr += '------------start---------------\n';
+        outputStr += `Init path: ${this.oPath}\n`;
+        outputStr += `Search string: ${this.searchStr}\n`;
         outputStr += 'By value:\n';
         this.matchedByValueMap.forEach(function (value, key) {
             outputStr += `  ${key}: ${value}\n`;
         });
-        outputStr += '----------------------------\n';
+        outputStr += '------------continue---------------\n';
         outputStr += 'By key:\n';
         this.matchedByKeyMap.forEach(function (value, key) {
             outputStr += `${key}: ${value}`;
         });
-        outputStr += '----------------------------\n';
-        outputStr += `History Set:\n`;
+        outputStr += '------------continue---------------\n';
+        outputStr += `Below path has been checked:\n`;
         this.oPathHistorySet.forEach(function (value) {
+            outputStr += `  ${value}\n`;
         })
+        outputStr += '------------end---------------\n';
         return outputStr;
     }
 }

@@ -5,9 +5,20 @@ const assert = require('simple-assert');
 const eql = require('deep-eql');
 const expect = require('chai').expect;
 const filterObj = require('filter-obj');
-const log = console.log;
 
+const aSet = new Set([66, 88]);
+const bMap = new Map([
+    ['a', 993],
+    ['b', 'lkdsfj'],
+    ['c', {
+        x: 22,
+    }]
+]);
 const obj = {
+    newFeature: {
+        set: aSet,
+        map: bMap,
+    },
     0: {7: 3},
     100: {a: 1},
     s: 'abc',
@@ -64,39 +75,98 @@ const obj = {
             d: 1666,
         },
         y: 'zzz',
+    },
+    f: {
+        ff1: 'lskdjf',
+        gff: 332,
+        fcff: [1, 2],
+        fj: {
+            ff0: 'dslfj',
+            ff6: [12, 223],
+            ccf: {
+                abcff: {a: 1, b: 2},
+                // zff:
+            }
+        }
     }
-
 };
 
-describe('测试函数formatPath', () => {
-    const t1 = new objNode(obj);
-    const ctx = {
-        k0: '0'
-    };
-
-    it('t1.genPathKeyAry("[1].az[k0]")应该返回[1, "az", "0"]', () => {
-        console.log(
-            t1.genPathKeyAry('[1].az[k0]', ctx),
-            `808080 test.js`
-        );
+describe('测试方法： handle, handleByValue', () => {
+    it('测试handle不传参, 使用构造函数中的初始值(传入"value"作为排序依据sortseq), 执行 testByValueInstance1.handle() 后 testByValueInstance1.matchedByValueMap 是否与预期一致', () => {
+        const testByValueInstance1 = new objNode(obj, 'd', 'ff', 'value');
+        testByValueInstance1.handle();
         assert(eql(
-            t1.genPathKeyAry('[1].az[k0]', ctx),
-            [1, "az", "0"]
-        ), 't1.genPathKeyAry("[1].az[k0]")应该返回[1, "az", "0"]');
+            testByValueInstance1.matchedByValueMap,
+            new Map([
+                ['[d][a]', 'af8ff'],
+                ['[d][b]', '99fff'],
+                ['[d][c]', 'gffffc'],
+            ])
+        ), '测试handle不传参, 使用构造函数中的初始值(为), 执行 testByValueInstance1.handle() 后 testByValueInstance1.matchedByValueMap 是否与预期一致');
     });
 
-    it('t1.getValue("[k0]") 应该递归等于 {7: 3}', () => {
-        console.log(t1.getValue("[k0]", ctx), `858585 test.js`);
+    it('测试handle不传参, 使用构造函数中的初始值(不为sortSeq传值，将使用"value"作为默认的排序依据sortseq), 执行 testByValueInstance2.handle() 后 testByValueInstance2.matchedByValueMap 是否与预期一致', () => {
+        const testByValueInstance2 = new objNode(obj, 'b', 'ff');
+        testByValueInstance2.handle();
         assert(eql(
-            t1.getValue("[k0]", ctx),
-            { '7': 3 }
-        ), 't1.getValue("[k0]", ctx) 应该递归等于 {7: 3}')
+            testByValueInstance2.matchedByValueMap,
+            new Map([
+                ['[b][0]', 'fklsdj8ff88'],
+                ['[b][1][a2][0]', 'ffccf'],
+                ['[b][1][a2][1]', 'cfffbff'],
+                ['[b][2]', '66ffsdlkfj'],
+                ['[b][4][0]', 'fsskldffcc'],
+                ['[b][4][1]', 'fkkdsjffdd'],
+                ['[b][4][2]', 'dksjffffccc']
+            ])
+        ), '测试handle不传参, 使用构造函数中的初始值, 执行 testByValueInstance2.handle() 后 testByValueInstance2.matchedByValueMap 是否与预期一致');
     });
+
+    it('测试handle不传参, 使用构造函数中的初始值(不为sortSeq传值，将使用"value"作为默认的排序依据sortseq), 执行 testByValueInstance2.handle() 后 testByValueInstance2.matchedByValueMap 是否与预期一致', () => {
+        const testByValueInstance2 = new objNode(obj, 'b', 'ff', 'value');
+        testByValueInstance2.handle();
+        assert(eql(
+            testByValueInstance2.matchedByValueMap,
+            new Map([
+                ['[b][0]', 'fklsdj8ff88'],
+                ['[b][1][a2][0]', 'ffccf'],
+                ['[b][1][a2][1]', 'cfffbff'],
+                ['[b][2]', '66ffsdlkfj'],
+                ['[b][4][0]', 'fsskldffcc'],
+                ['[b][4][1]', 'fkkdsjffdd'],
+                ['[b][4][2]', 'dksjffffccc']
+            ])
+        ), '测试handle不传参, 使用构造函数中的初始值, 执行 testByValueInstance2.handle() 后 testByValueInstance2.matchedByValueMap 是否与预期一致');
+    });
+});
+
+
+describe('测试方法： handle, handleByKey', () => {
+    it('测试handle不传参, 使用构造函数中的初始值(传入"key"作为排序依据sortSeq), 执行 testByKeyInstance1.handle() 后 testByKeyInstance1.matchedByKeyMap 是否与预期一致', () => {
+        const testByKeyInstance1 = new objNode(obj, 'f', 'ff', 'key');
+        testByKeyInstance1.handle();
+        assert(eql(
+            testByKeyInstance1.matchedByKeyMap,
+            new Map ([
+                ['[f][ff1]', 'lskdjf'],
+                ['[f][gff]', 332],
+                ['[f][fcff]', [1, 2]],
+                ['[f][fcff][0]', 1],
+                ['[f][fcff][1]', 2],
+                ['[f][fj][ff0]', 'dslfj'],
+                ['[f][fj][ff6]', [12, 223]],
+                ['[f][fj][ff6][0]', 12],
+                ['[f][fj][ff6][1]', 223],
+                ['[f][fj][ccf][abcff]', {a: 1, b: 2}],
+                ['[f][fj][ccf][abcff][a]', 1],
+                ['[f][fj][ccf][abcff][b]', 2]
+                ])
+        ), '测试handle不传参, 使用构造函数中的初始值(为), 执行 testByValueInstance1.handle() 后 testByValueInstance1.matchedByValueMap 是否与预期一致');
+    })
 });
 
 describe('测试"filter-obj"', () => {
     it('get exist property of the obj must return right value.', () => {
-        console.log(filterObj(obj, ['100']), 404040);
         assert(
             eql(
                 filterObj(obj, ['100']),
@@ -109,11 +179,75 @@ describe('测试"filter-obj"', () => {
     })
 });
 
+describe('测试 方法genPathKeyAry方法 和 方法getValue', () => {
+    const t1 = new objNode(obj);
+    const ctx = {
+        k0: '0'
+    };
+
+    it('t1.genPathKeyAry("[1].az[k0]")应该返回[1, "az", "0"]', () => {
+        assert(eql(
+            t1.genPathKeyAry('[1].az[k0]', ctx), //仅仅测试 方法genPathKeyAry
+            [1, "az", "0"]
+        ), 't1.genPathKeyAry("[1].az[k0]")应该返回[1, "az", "0"]');
+    });
+
+    it('t1.getValue("a.obj") 应该递归等于 {a: 1, b: 2}', () => {
+        assert(eql(
+            t1.getValue("a.obj", ctx), //点路径表示法
+            {a: 1, b: 2}
+        ), 't1.getValue("a.obj", ctx) 应该递归等于 {a: 1, b: 2}')
+    });
+
+    it('t1.getValue("[k0]") 应该递归等于 {7: 3}', () => {
+        assert(eql(
+            t1.getValue("[k0]", ctx), //一次使用 方括号数字字符串路径表示法
+            {'7': 3}
+        ), 't1.getValue("[k0]", ctx) 应该递归等于 {7: 3}')
+    });
+
+    it('t1.getValue("a[`obj`]") 应该递归等于 {a: 1, b: 2}', () => {
+        assert(eql(
+            t1.getValue("a[`obj`]", ctx), //一次使用 方括号字符串路径表示法
+            {a: 1, b: 2}
+        ), 't1.getValue("a[`obj`]", ctx) 应该递归等于 {a: 1, b: 2}')
+    });
+
+    it('const ctx1 = {k1: "obj"}; t1.getValue("a[k1], ctx1") 应该递归等于 {a: 1, b: 2}', () => {
+        const ctx1 = {k1: "obj"};
+        assert(eql(
+            t1.getValue("a[k1]", ctx1), //一次使用 方括号字符串引用变量路径表示法
+            {a: 1, b: 2}
+            ),
+            'const ctx1 = {k1: "obj"}; t1.getValue("a[k1], ctx1") 应该递归等于 {a: 1, b: 2}'
+        )
+    });
+
+    it('const ctx1 = {k1: "obj", k2: "a"}; t1.getValue("a[k1][k2], ctx1") 应该递归等于 {a: 1, b: 2}', () => {
+        const ctx1 = {k1: "obj", k2: "a"};
+        assert(eql(
+            t1.getValue("a[k1][k2]", ctx1), //两次使用 方括号字符串引用变量路径表示法
+            1
+            ),
+            'const ctx1 = {k1: "obj", k2: "a"}; t1.getValue("a[k1][k2]", ctx1) 应该等于 1'
+        )
+    });
+
+    it('const ctx1 = {k1: "obj", k2: "a"}; t1.getValue("a[k1].a, ctx1") 应该等于 1', () => {
+        const ctx1 = {k1: "obj"};
+        assert(eql(
+            t1.getValue("a[k1].a", ctx1), //混用 方括号路径表示法 和 点路径表示法
+            1
+            ),
+            'const ctx1 = {k1: "obj"}; t1.getValue("a[k1].a", ctx1) 应该等于 1'
+        )
+    });
+});
+
 describe('根据对象点表示法，获取对应的值的测试', () => {
     it(`new objNode(obj, 'a').getValue() 应该递归等于{ ary: [0, 1], obj: {a: 1, b: 2}, }`, () => {
         const t1 = new objNode(obj, 'a');
         const resValue = t1.getValue();
-        console.log(resValue, 525252);
         assert(
             eql(resValue, {
                 ary: [0, 1],
@@ -133,7 +267,6 @@ describe('当构造函数中的 路径参数 和 被搜索字符串参数 不传
     it(`传入路径参数 不传入被搜索字符串`, () => {
         const t1 = new objNode(obj, 's');
         const resValue = t1.getValue();
-        console.log(resValue, '88,88,');
         assert(eql(resValue, 'abc'), `eql(new objNode(obj).getValue(), 'abc'`);
     });
     it(`传入null作为路径参数 并传入被搜索字符串参数`, () => {
@@ -148,58 +281,57 @@ describe('当构造函数中的 路径参数 和 被搜索字符串参数 不传
     });
 });
 
-// describe('传入"e.x"作为构造函数中的路径字符串，并在方法getValue中传入字符串作为后面的路径字符串参数， 获得以obj为上下文,路径为以上两个路径字符串组合后的路径，并测试获取到的对应的值。', () => {
-//     const t1 = new objNode(obj, 'e.x')
-//     it(`向实例t1的方法getValue中传入路径"a"作为参数，并测试是否获得正确的值`,
-//         () => {
-//             assert(
-//                 eql(
-//                     t1.getValue('a'),
-//                     {
-//                         x: 1,
-//                         y: 2,
-//                     }
-//                 ),
-//                 `eql( t1.getValue('a'), { x: 1, y: 2, } )`
-//             );
-//         }
-//     );
-//
-//     it(`向实例t1的方法getValue中传入路径"b.x"作为参数，并测试是否获得正确的值`,
-//         () => {
-//             console.log(t1.getValue('b.x'), 141141);
-//             assert(
-//                 eql(
-//                     t1.getValue('b.x'),
-//                     [
-//                         1,
-//                         {m: 6}
-//                     ]
-//                 ),
-//                 `eql( t1.getValue('b.x'), [ 1, {m: 6} ] )`
-//             );
-//         }
-//     )
-//
-//     it(`向实例t1的方法getValue中传入路径"b.x[1]"作为参数，并测试是否获得正确的值`,
-//         () => {
-//             console.log(t1.getValue('b.x[1]'), 157157);
-//             assert(
-//                 eql(
-//                     t1.getValue('b.x[1]'),
-//                     {m: 6}
-//                 ),
-//                 `eql( t1.getValue('b.x'), {m: 6})`
-//             );
-//         }
-//     )
-// })
+describe('传入"e.x"作为构造函数中的路径字符串，并在方法getValue中传入字符串作为后面的路径字符串参数， 获得以obj为上下文,路径为以上两个路径字符串组合后的路径，并测试获取到的对应的值。', () => {
+    const t1 = new objNode(obj, 'e.x');
+    it(`向实例t1的方法getValue中传入路径"a"作为参数，并测试是否获得正确的值`,
+        () => {
+            assert(
+                eql(
+                    t1.getValue('a'),
+                    {
+                        x: 1,
+                        y: 2,
+                    }
+                ),
+                `eql( t1.getValue('a'), { x: 1, y: 2, } )`
+            );
+        }
+    );
+
+    it(`向实例t1的方法getValue中传入路径"b.x"作为参数，并测试是否获得正确的值`,
+        () => {
+            assert(
+                eql(
+                    t1.getValue('b.x'),
+                    [
+                        1,
+                        {m: 6}
+                    ]
+                ),
+                `eql( t1.getValue('b.x'), [ 1, {m: 6} ] )`
+            );
+        }
+    )
+
+    it(`向实例t1的方法getValue中传入路径"b.x[1]"作为参数，并测试是否获得正确的值`,
+        () => {
+            assert(
+                eql(
+                    t1.getValue('b.x[1]'),
+                    {m: 6}
+                ),
+                `eql( t1.getValue('b.x'), {m: 6})`
+            );
+        }
+    )
+});
 
 describe('测试字符串outputStr', () => {
+    //测试方法handleByValue
     const t1 = new objNode(obj, 'c', 'ff');
-    t1.handleByValue();
+    t1.handle();
     const outputStr1 = t1.getOutputMatched();
-    // console.log(outputStr1, 656565);
+    console.log(outputStr1);
 
     it(`应该输出分割线`, () => {
         assert(
@@ -216,9 +348,9 @@ describe('测试字符串outputStr', () => {
     });
 
     const t2 = new objNode(obj, 'b', 'ff');
-    t2.handleByValue();
+    t2.handle();
     const outputStr2 = t2.getOutputMatched();
-    // console.log(outputStr2, 797979);
+    console.log(outputStr2);
 
     it(`按值搜索应该匹配上正则: /\\[b\\]\\[0\\]/: fklsdj8ff88/`, () => {
         assert(
@@ -235,13 +367,46 @@ describe('测试字符串outputStr', () => {
     });
 
     const t3 = new objNode(obj, 'd', 'ff');
-    t3.handleByValue();
+    t3.handle();
     const outputStr3 = t3.getOutputMatched();
-    console.log(outputStr3, 105105);
+    console.log(outputStr3);
+
     it(`按值搜索应该匹配上正则: /\\[d\\]\\[a\\]: af8ff/`, () => {
         assert(
             eql(/\[d\]\[a\]/.test(outputStr3), true),
             `eql(/\[d\]\[a\]/.test(outputStr3), true)`,
         )
     })
+
+    //测试方法handleByKey
 });
+
+describe('浅层测试获取新特性 Set 和 Map', () => {
+    const t1 = new objNode(obj);
+    it(`分别测试 t1.getValue("newFeature.set"), t1.getValue("newFeature.map"), t1.getValue("newFeature")`, () => {
+        const targetSet = new Set([66, 88]);
+        const targetMap = new Map([
+            ['a', 993],
+            ['b', 'lkdsfj'],
+            ['c', {
+                x: 22,
+            }]
+        ]);
+        assert(eql(
+            t1.getValue("newFeature.set"),
+            targetSet
+        ), '测试 t1.getValue("newFeature.set")');
+        assert(eql(
+            t1.getValue("newFeature.map"),
+            targetMap
+        ), '测试 t1.getValue("newFeature.map")');
+        assert(eql(
+            t1.getValue("newFeature"),
+            {
+                set: targetSet,
+                map: targetMap,
+            }
+        ), '测试 t1.getValue("newFeature")');
+    });
+});
+

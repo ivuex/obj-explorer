@@ -109,7 +109,7 @@ class objNode {
     }
 
     // searchByValue(tmpKeyAry = this.oPathAry, item = this.getValue()) {
-    searchByValue(tmpKeyAry, item) {
+    searchByValue(tmpKeyAry, item, searchStr) {
         console.log('method searchByValue executed.', 113113);
         const joinedTmpKey = tmpKeyAry.map(x => `[${x}]`).join('')
         this.searchHistoryRecord(joinedTmpKey);
@@ -122,7 +122,7 @@ class objNode {
             case 'Symbol':
             case 'Map':
             case 'Set':
-                if (this.checkStrIfMatch(item, this.searchStr)) {
+                if (this.checkStrIfMatch(item, searchStr)) {
                     this.matchedByValueMap.set(
                         joinedTmpKey,
                         item
@@ -141,11 +141,11 @@ class objNode {
     }
 
     // searchByKey(tmpKeyAry = this.oPathAry, item = this.getValue()) {
-    searchByKey(tmpKeyAry, item) {
+    searchByKey(tmpKeyAry, item, searchStr) {
         console.log('method searchByKey executed.', 145145);
         const joinedTmpKey = tmpKeyAry.map(x => `[${x}]`).join('')
         this.searchHistoryRecord(joinedTmpKey);
-        if (this.checkStrIfMatch(joinedTmpKey, this.searchStr)) {
+        if (this.checkStrIfMatch(joinedTmpKey, searchStr)) {
             this.matchedByKeyMap.set(
                 joinedTmpKey,
                 item
@@ -169,11 +169,11 @@ class objNode {
         if (item == null) item = this.getValue; //item 可传入null占位
         switch (sortSeq) {
             case 'key':
-                this.searchByKey(tmpKeyAry, item);
+                this.searchByKey(tmpKeyAry, item, searchStr);
                 break;
             case 'value':
             default:
-                this.searchByValue(tmpKeyAry, item);
+                this.searchByValue(tmpKeyAry, item, searchStr);
                 break;
         }
     }

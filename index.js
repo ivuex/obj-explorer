@@ -149,7 +149,7 @@ class objNode {
                 joinedTmpKey,
                 item
             );
-            // console.log(this.matchedByKeyMap, 153153);
+            console.log(this.matchedByKeyMap, 153153);
         }
         this.searchHistoryRecord(joinedTmpKey);
         switch (this.getType(item)) {

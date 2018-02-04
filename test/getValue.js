@@ -167,54 +167,53 @@ describe('测试方法： search, searchByKey', () => {
 
 describe('new一个实例instance=new objNode(obj), 测试方法search， 分别传入searchStr, sortSeq, 看实例的matchedByValueMap 和(或) matchedByKeyMap 是否于预期一致', () => {
     const instance = new objNode(obj);
-    //
-    // it('只向方法search传入字符串"ff"作为参数searchStr, 其它参数不传', () => {
-    //     instance.search('ff');
-    //     assert(eql(
-    //         instance.matchedByValueMap,
-    //         new Map([
-    //             ['[b][0]', 'fklsdj8ff88'],
-    //             ['[b][1][a2][0]', 'ffccf'],
-    //             ['[b][1][a2][1]', 'cfffbff'],
-    //             ['[b][2]', '66ffsdlkfj'],
-    //             ['[b][4][0]', 'fsskldffcc'],
-    //             ['[b][4][1]', 'fkkdsjffdd'],
-    //             ['[b][4][2]', 'dksjffffccc'],
-    //             ['[c][b][f]', 'ffff'],
-    //             ['[d][a]', 'af8ff'],
-    //             ['[d][b]', '99fff'],
-    //             ['[d][c]', 'gffffc']
-    //         ])
-    //     ), '只向方法search传入字符串"ff"作为参数searchStr, 其它参数不传')
-    // });
-    //
-    // it('只向方法search传入字符串"ff"作为参数searchStr, 字符串"value"作为sortSeq, 其它参数不传', () => {
-    //     instance.search('ff', 'value');
-    //     assert(eql(
-    //         instance.matchedByValueMap,
-    //         new Map([
-    //             ['[b][0]', 'fklsdj8ff88'],
-    //             ['[b][1][a2][0]', 'ffccf'],
-    //             ['[b][1][a2][1]', 'cfffbff'],
-    //             ['[b][2]', '66ffsdlkfj'],
-    //             ['[b][4][0]', 'fsskldffcc'],
-    //             ['[b][4][1]', 'fkkdsjffdd'],
-    //             ['[b][4][2]', 'dksjffffccc'],
-    //             ['[c][b][f]', 'ffff'],
-    //             ['[d][a]', 'af8ff'],
-    //             ['[d][b]', '99fff'],
-    //             ['[d][c]', 'gffffc']
-    //         ])
-    //     ), '只向方法search传入字符串"ff"作为参数searchStr, 字符串"value"作为sortSeq, 其它参数不传')
-    // });
+
+    it('只向方法search传入字符串"ff"作为参数searchStr, 其它参数不传', () => {
+        instance.search('ff');
+        assert(eql(
+            instance.matchedByValueMap,
+            new Map([
+                ['[b][0]', 'fklsdj8ff88'],
+                ['[b][1][a2][0]', 'ffccf'],
+                ['[b][1][a2][1]', 'cfffbff'],
+                ['[b][2]', '66ffsdlkfj'],
+                ['[b][4][0]', 'fsskldffcc'],
+                ['[b][4][1]', 'fkkdsjffdd'],
+                ['[b][4][2]', 'dksjffffccc'],
+                ['[c][b][f]', 'ffff'],
+                ['[d][a]', 'af8ff'],
+                ['[d][b]', '99fff'],
+                ['[d][c]', 'gffffc']
+            ])
+        ), '只向方法search传入字符串"ff"作为参数searchStr, 其它参数不传')
+    });
+
+    it('只向方法search传入字符串"ff"作为参数searchStr, 字符串"value"作为sortSeq, 其它参数不传', () => {
+        instance.search('ff', 'value');
+        assert(eql(
+            instance.matchedByValueMap,
+            new Map([
+                ['[b][0]', 'fklsdj8ff88'],
+                ['[b][1][a2][0]', 'ffccf'],
+                ['[b][1][a2][1]', 'cfffbff'],
+                ['[b][2]', '66ffsdlkfj'],
+                ['[b][4][0]', 'fsskldffcc'],
+                ['[b][4][1]', 'fkkdsjffdd'],
+                ['[b][4][2]', 'dksjffffccc'],
+                ['[c][b][f]', 'ffff'],
+                ['[d][a]', 'af8ff'],
+                ['[d][b]', '99fff'],
+                ['[d][c]', 'gffffc']
+            ])
+        ), '只向方法search传入字符串"ff"作为参数searchStr, 字符串"value"作为sortSeq, 其它参数不传')
+    });
 
     it('只向方法search传入字符串"ff"作为参数searchStr, 字符串"key"作为sortSeq, 其它参数不传', () => {
         instance.search('ff', 'key');
         // console.log( instance.matchedByKeyMap, 213213 );
         // console.log(instance.oPathHistorySet, 214214);
-        console.log(instance.matchedByKeyMap, 153153);
-        console.log( instance.matchedByKeyMap, 215215 );
-        console.log(instance.oPathHistorySet, 214214);
+        console.log( instance.matchedByKeyMap, 215215 ); //Map {} 为什么会为空 Map?
+        console.log(instance.oPathHistorySet, 214214); //正确的， 这是Set, 是查找历史. //从这里看不像是异步造成的。
         assert(eql(
             instance.matchedByKeyMap,
             new Map([

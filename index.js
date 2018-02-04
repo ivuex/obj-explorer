@@ -90,27 +90,25 @@ class objNode {
         }
     }
 
-    travelAry(tmpKeyAry, ary) {
+    travelAry(tmpKeyAry, ary, searchStr) {
         ary.forEach((item, key) => {
             tmpKeyAry.push(key);
-            this.search(null, null,  tmpKeyAry, item);
+            this.search(searchStr, null,  tmpKeyAry, item);
             tmpKeyAry.pop();
         })
     }
 
-    travelObj(tmpKeyAry, obj) {
+    travelObj(tmpKeyAry, obj, searchStr) {
         const keys = Object.keys(obj);
         keys.forEach((key) => {
             const item = obj[key];
             tmpKeyAry.push(key);
-            this.search(null, null, tmpKeyAry, item);
+            this.search(searchStr, null, tmpKeyAry, item);
             tmpKeyAry.pop();
         })
     }
 
-    // searchByValue(tmpKeyAry = this.oPathAry, item = this.getValue()) {
     searchByValue(tmpKeyAry, item, searchStr) {
-        console.log('method searchByValue executed.', 113113);
         const joinedTmpKey = tmpKeyAry.map(x => `[${x}]`).join('')
         this.searchHistoryRecord(joinedTmpKey);
         switch (this.getType(item)) {
@@ -130,33 +128,36 @@ class objNode {
                 }
                 break;
             case 'Array':
-                this.travelAry(tmpKeyAry, item);
+                this.travelAry(tmpKeyAry, item, searchStr);
                 break;
             case 'Object':
-                this.travelObj(tmpKeyAry, item);
+                this.travelObj(tmpKeyAry, item, searchStr);
                 break;
             case 'default':
                 return void 0;
         }
     }
 
-    // searchByKey(tmpKeyAry = this.oPathAry, item = this.getValue()) {
     searchByKey(tmpKeyAry, item, searchStr) {
-        console.log('method searchByKey executed.', 145145);
+        // console.log('method searchByKey executed, 142142');
+        // console.log(arguments[2], 143143);
+        // console.log(arguments.callee.caller, 144);
         const joinedTmpKey = tmpKeyAry.map(x => `[${x}]`).join('')
-        this.searchHistoryRecord(joinedTmpKey);
         if (this.checkStrIfMatch(joinedTmpKey, searchStr)) {
+            console.log(joinedTmpKey, 148148);
             this.matchedByKeyMap.set(
                 joinedTmpKey,
                 item
             );
+            // console.log(this.matchedByKeyMap, 153153);
         }
+        this.searchHistoryRecord(joinedTmpKey);
         switch (this.getType(item)) {
             case 'Array':
-                this.travelAry(tmpKeyAry, item);
+                this.travelAry(tmpKeyAry, item, searchStr);
                 break;
             case 'Object':
-                this.travelObj(tmpKeyAry, item);
+                this.travelObj(tmpKeyAry, item, searchStr);
                 break;
         }
     }

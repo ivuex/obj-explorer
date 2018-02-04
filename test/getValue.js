@@ -165,12 +165,74 @@ describe('测试方法： search, searchByKey', () => {
     })
 });
 
-describe('测试方法search， 分别传入searchStr, sortSeq, 看实例的matchedByValueMap 和(或) matchedByKeyMap 是否于预期一致', () => {
-    it('只向方法search传入参数searchStr, 其它参数不传', () => {
-        const instance =  new objNode(obj);
-        instance.search('ff', 'value');
-        console.log( instance.matchedByValueMap, 173173 );
-    })
+describe('new一个实例instance=new objNode(obj), 测试方法search， 分别传入searchStr, sortSeq, 看实例的matchedByValueMap 和(或) matchedByKeyMap 是否于预期一致', () => {
+    const instance = new objNode(obj);
+    //
+    // it('只向方法search传入字符串"ff"作为参数searchStr, 其它参数不传', () => {
+    //     instance.search('ff');
+    //     assert(eql(
+    //         instance.matchedByValueMap,
+    //         new Map([
+    //             ['[b][0]', 'fklsdj8ff88'],
+    //             ['[b][1][a2][0]', 'ffccf'],
+    //             ['[b][1][a2][1]', 'cfffbff'],
+    //             ['[b][2]', '66ffsdlkfj'],
+    //             ['[b][4][0]', 'fsskldffcc'],
+    //             ['[b][4][1]', 'fkkdsjffdd'],
+    //             ['[b][4][2]', 'dksjffffccc'],
+    //             ['[c][b][f]', 'ffff'],
+    //             ['[d][a]', 'af8ff'],
+    //             ['[d][b]', '99fff'],
+    //             ['[d][c]', 'gffffc']
+    //         ])
+    //     ), '只向方法search传入字符串"ff"作为参数searchStr, 其它参数不传')
+    // });
+    //
+    // it('只向方法search传入字符串"ff"作为参数searchStr, 字符串"value"作为sortSeq, 其它参数不传', () => {
+    //     instance.search('ff', 'value');
+    //     assert(eql(
+    //         instance.matchedByValueMap,
+    //         new Map([
+    //             ['[b][0]', 'fklsdj8ff88'],
+    //             ['[b][1][a2][0]', 'ffccf'],
+    //             ['[b][1][a2][1]', 'cfffbff'],
+    //             ['[b][2]', '66ffsdlkfj'],
+    //             ['[b][4][0]', 'fsskldffcc'],
+    //             ['[b][4][1]', 'fkkdsjffdd'],
+    //             ['[b][4][2]', 'dksjffffccc'],
+    //             ['[c][b][f]', 'ffff'],
+    //             ['[d][a]', 'af8ff'],
+    //             ['[d][b]', '99fff'],
+    //             ['[d][c]', 'gffffc']
+    //         ])
+    //     ), '只向方法search传入字符串"ff"作为参数searchStr, 字符串"value"作为sortSeq, 其它参数不传')
+    // });
+
+    it('只向方法search传入字符串"ff"作为参数searchStr, 字符串"key"作为sortSeq, 其它参数不传', () => {
+        instance.search('ff', 'key');
+        // console.log( instance.matchedByKeyMap, 213213 );
+        // console.log(instance.oPathHistorySet, 214214);
+        console.log(instance.matchedByKeyMap, 153153);
+        console.log( instance.matchedByKeyMap, 215215 );
+        console.log(instance.oPathHistorySet, 214214);
+        assert(eql(
+            instance.matchedByKeyMap,
+            new Map([
+                ['[f][ff1]', 'lskdjf'],
+                ['[f][gff]', 332],
+                ['[f][fcff]', [1, 2]],
+                ['[f][fcff][0]', 1],
+                ['[f][fcff][1]', 2],
+                ['[f][fj][ff0]', 'dslfj'],
+                ['[f][fj][ff6]', [12, 223]],
+                ['[f][fj][ff6][0]', 12],
+                ['[f][fj][ff6][1]', 223],
+                ['[f][fj][ccf][abcff]', {a: 1, b: 2}],
+                ['[f][fj][ccf][abcff][a]', 1],
+                ['[f][fj][ccf][abcff][b]', 2]
+            ])
+        ), '只向方法search传入字符串"ff"作为参数searchStr, 字符串"key"作为sortSeq, 其它参数不传')
+    });
 });
 
 describe('测试"filter-obj"', () => {
@@ -319,7 +381,7 @@ describe('传入"e.x"作为构造函数中的路径字符串，并在方法getVa
                 `eql( t1.getValue('b.x'), [ 1, {m: 6} ] )`
             );
         }
-    )
+    );
 
     it(`向实例t1的方法getValue中传入路径"b.x[1]"作为参数，并测试是否获得正确的值`,
         () => {
@@ -331,7 +393,7 @@ describe('传入"e.x"作为构造函数中的路径字符串，并在方法getVa
                 `eql( t1.getValue('b.x'), {m: 6})`
             );
         }
-    )
+    );
 });
 
 describe('测试字符串outputStr', () => {

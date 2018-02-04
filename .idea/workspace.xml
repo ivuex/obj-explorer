@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0b3ca779-5923-47c8-aa06-3d631af23ae7" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/test/dependencies-pkg.test.d/deep-Object-Set-Map.test.js" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/index.js" afterPath="$PROJECT_DIR$/index.js" />
-      <change beforePath="$PROJECT_DIR$/test/deep-object.test.js" afterPath="" />
       <change beforePath="$PROJECT_DIR$/test/getValue.js" afterPath="$PROJECT_DIR$/test/getValue.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -23,8 +20,8 @@
       <file leaf-file-name="index.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="444">
-              <caret line="156" column="34" lean-forward="false" selection-start-line="156" selection-start-column="11" selection-end-line="156" selection-end-column="35" />
+            <state relative-caret-position="456">
+              <caret line="124" column="49" lean-forward="false" selection-start-line="124" selection-start-column="49" selection-end-line="124" selection-end-column="49" />
               <folding />
             </state>
           </provider>
@@ -43,8 +40,8 @@
       <file leaf-file-name="getValue.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/getValue.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="576">
-              <caret line="95" column="0" lean-forward="false" selection-start-line="95" selection-start-column="0" selection-end-line="95" selection-end-column="0" />
+            <state relative-caret-position="432">
+              <caret line="171" column="35" lean-forward="false" selection-start-line="171" selection-start-column="35" selection-end-line="171" selection-end-column="35" />
               <folding>
                 <element signature="e#354#399#0" expanded="false" />
               </folding>
@@ -198,12 +195,12 @@
       <workItem from="1515889794598" duration="23560000" />
       <workItem from="1516109078500" duration="30730000" />
       <workItem from="1516499120514" duration="5072000" />
-      <workItem from="1517664550931" duration="4875000" />
+      <workItem from="1517664550931" duration="12744000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="118454000" />
+    <option name="totallyTimeSpent" value="126323000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="31" width="1366" height="732" extended-state="6" />
@@ -514,8 +511,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test/getValue.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="576">
-          <caret line="95" column="0" lean-forward="false" selection-start-line="95" selection-start-column="0" selection-end-line="95" selection-end-column="0" />
+        <state relative-caret-position="432">
+          <caret line="171" column="35" lean-forward="false" selection-start-line="171" selection-start-column="35" selection-end-line="171" selection-end-column="35" />
           <folding>
             <element signature="e#354#399#0" expanded="false" />
           </folding>
@@ -524,8 +521,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="444">
-          <caret line="156" column="34" lean-forward="false" selection-start-line="156" selection-start-column="11" selection-end-line="156" selection-end-column="35" />
+        <state relative-caret-position="456">
+          <caret line="124" column="49" lean-forward="false" selection-start-line="124" selection-start-column="49" selection-end-line="124" selection-end-column="49" />
           <folding />
         </state>
       </provider>

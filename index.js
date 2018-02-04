@@ -93,7 +93,7 @@ class objNode {
     travelAry(tmpKeyAry, ary) {
         ary.forEach((item, key) => {
             tmpKeyAry.push(key);
-            this.handle(tmpKeyAry, item);
+            this.search(null, null,  tmpKeyAry, item);
             tmpKeyAry.pop();
         })
     }
@@ -103,13 +103,14 @@ class objNode {
         keys.forEach((key) => {
             const item = obj[key];
             tmpKeyAry.push(key);
-            this.handle(tmpKeyAry, item);
+            this.search(null, null, tmpKeyAry, item);
             tmpKeyAry.pop();
         })
     }
 
-    // handleByValue(tmpKeyAry = this.oPathAry, item = this.getValue()) {
-    handleByValue(tmpKeyAry, item) {
+    // searchByValue(tmpKeyAry = this.oPathAry, item = this.getValue()) {
+    searchByValue(tmpKeyAry, item) {
+        console.log('method searchByValue executed.', 113113);
         const joinedTmpKey = tmpKeyAry.map(x => `[${x}]`).join('')
         this.searchHistoryRecord(joinedTmpKey);
         switch (this.getType(item)) {
@@ -139,8 +140,9 @@ class objNode {
         }
     }
 
-    // handleByKey(tmpKeyAry = this.oPathAry, item = this.getValue()) {
-    handleByKey(tmpKeyAry, item) {
+    // searchByKey(tmpKeyAry = this.oPathAry, item = this.getValue()) {
+    searchByKey(tmpKeyAry, item) {
+        console.log('method searchByKey executed.', 145145);
         const joinedTmpKey = tmpKeyAry.map(x => `[${x}]`).join('')
         this.searchHistoryRecord(joinedTmpKey);
         if (this.checkStrIfMatch(joinedTmpKey, this.searchStr)) {
@@ -160,16 +162,18 @@ class objNode {
     }
 
 
-    handle(tmpKeyAry = this.oPathAry, item = this.getValue(), sortSeq = this.sortSeq) {
-        if (!item) item = this.getValue; //item 可传入null占位
-        if (!tmpKeyAry) tmpKeyAry = this.oPathAry;  //tmpKeyAry 可传入null占位
+    search(searchStr = this.searchStr, sortSeq = this.sortSeq, tmpKeyAry = this.oPathAry, item = this.getValue()) {
+        if (searchStr == null) searchStr = this.searchStr;
+        if (sortSeq == null) sortSeq = this.sortSeq;
+        if (tmpKeyAry == null) tmpKeyAry = this.oPathAry;  //tmpKeyAry 可传入null占位
+        if (item == null) item = this.getValue; //item 可传入null占位
         switch (sortSeq) {
             case 'key':
-                this.handleByKey(tmpKeyAry, item);
+                this.searchByKey(tmpKeyAry, item);
                 break;
-            case this.sortSeq:
+            case 'value':
             default:
-                this.handleByValue(tmpKeyAry, item);
+                this.searchByValue(tmpKeyAry, item);
                 break;
         }
     }

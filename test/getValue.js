@@ -91,10 +91,10 @@ const obj = {
     }
 };
 
-describe('测试方法： handle, handleByValue', () => {
-    it('测试handle不传参, 使用构造函数中的初始值(传入"value"作为排序依据sortseq), 执行 testByValueInstance1.handle() 后 testByValueInstance1.matchedByValueMap 是否与预期一致', () => {
+describe('测试方法： search, searchByValue', () => {
+    it('测试search不传参, 使用构造函数中的初始值(传入"value"作为排序依据sortseq), 执行 testByValueInstance1.search() 后 testByValueInstance1.matchedByValueMap 是否与预期一致', () => {
         const testByValueInstance1 = new objNode(obj, 'd', 'ff', 'value');
-        testByValueInstance1.handle();
+        testByValueInstance1.search();
         assert(eql(
             testByValueInstance1.matchedByValueMap,
             new Map([
@@ -102,12 +102,12 @@ describe('测试方法： handle, handleByValue', () => {
                 ['[d][b]', '99fff'],
                 ['[d][c]', 'gffffc'],
             ])
-        ), '测试handle不传参, 使用构造函数中的初始值(为), 执行 testByValueInstance1.handle() 后 testByValueInstance1.matchedByValueMap 是否与预期一致');
+        ), '测试search不传参, 使用构造函数中的初始值(为), 执行 testByValueInstance1.search() 后 testByValueInstance1.matchedByValueMap 是否与预期一致');
     });
 
-    it('测试handle不传参, 使用构造函数中的初始值(不为sortSeq传值，将使用"value"作为默认的排序依据sortseq), 执行 testByValueInstance2.handle() 后 testByValueInstance2.matchedByValueMap 是否与预期一致', () => {
+    it('测试search不传参, 使用构造函数中的初始值(不为sortSeq传值，将使用"value"作为默认的排序依据sortseq), 执行 testByValueInstance2.search() 后 testByValueInstance2.matchedByValueMap 是否与预期一致', () => {
         const testByValueInstance2 = new objNode(obj, 'b', 'ff');
-        testByValueInstance2.handle();
+        testByValueInstance2.search();
         assert(eql(
             testByValueInstance2.matchedByValueMap,
             new Map([
@@ -119,12 +119,12 @@ describe('测试方法： handle, handleByValue', () => {
                 ['[b][4][1]', 'fkkdsjffdd'],
                 ['[b][4][2]', 'dksjffffccc']
             ])
-        ), '测试handle不传参, 使用构造函数中的初始值, 执行 testByValueInstance2.handle() 后 testByValueInstance2.matchedByValueMap 是否与预期一致');
+        ), '测试search不传参, 使用构造函数中的初始值, 执行 testByValueInstance2.search() 后 testByValueInstance2.matchedByValueMap 是否与预期一致');
     });
 
-    it('测试handle不传参, 使用构造函数中的初始值(不为sortSeq传值，将使用"value"作为默认的排序依据sortseq), 执行 testByValueInstance2.handle() 后 testByValueInstance2.matchedByValueMap 是否与预期一致', () => {
+    it('测试search不传参, 使用构造函数中的初始值(不为sortSeq传值，将使用"value"作为默认的排序依据sortseq), 执行 testByValueInstance2.search() 后 testByValueInstance2.matchedByValueMap 是否与预期一致', () => {
         const testByValueInstance2 = new objNode(obj, 'b', 'ff', 'value');
-        testByValueInstance2.handle();
+        testByValueInstance2.search();
         assert(eql(
             testByValueInstance2.matchedByValueMap,
             new Map([
@@ -136,18 +136,18 @@ describe('测试方法： handle, handleByValue', () => {
                 ['[b][4][1]', 'fkkdsjffdd'],
                 ['[b][4][2]', 'dksjffffccc']
             ])
-        ), '测试handle不传参, 使用构造函数中的初始值, 执行 testByValueInstance2.handle() 后 testByValueInstance2.matchedByValueMap 是否与预期一致');
+        ), '测试search不传参, 使用构造函数中的初始值, 执行 testByValueInstance2.search() 后 testByValueInstance2.matchedByValueMap 是否与预期一致');
     });
 });
 
 
-describe('测试方法： handle, handleByKey', () => {
-    it('测试handle不传参, 使用构造函数中的初始值(传入"key"作为排序依据sortSeq), 执行 testByKeyInstance1.handle() 后 testByKeyInstance1.matchedByKeyMap 是否与预期一致', () => {
+describe('测试方法： search, searchByKey', () => {
+    it('测试search不传参, 使用构造函数中的初始值(传入"key"作为排序依据sortSeq), 执行 testByKeyInstance1.search() 后 testByKeyInstance1.matchedByKeyMap 是否与预期一致', () => {
         const testByKeyInstance1 = new objNode(obj, 'f', 'ff', 'key');
-        testByKeyInstance1.handle();
+        testByKeyInstance1.search();
         assert(eql(
             testByKeyInstance1.matchedByKeyMap,
-            new Map ([
+            new Map([
                 ['[f][ff1]', 'lskdjf'],
                 ['[f][gff]', 332],
                 ['[f][fcff]', [1, 2]],
@@ -160,8 +160,16 @@ describe('测试方法： handle, handleByKey', () => {
                 ['[f][fj][ccf][abcff]', {a: 1, b: 2}],
                 ['[f][fj][ccf][abcff][a]', 1],
                 ['[f][fj][ccf][abcff][b]', 2]
-                ])
-        ), '测试handle不传参, 使用构造函数中的初始值(为), 执行 testByValueInstance1.handle() 后 testByValueInstance1.matchedByValueMap 是否与预期一致');
+            ])
+        ), '测试search不传参, 使用构造函数中的初始值(为), 执行 testByValueInstance1.search() 后 testByValueInstance1.matchedByValueMap 是否与预期一致');
+    })
+});
+
+describe('测试方法search， 分别传入searchStr, sortSeq, 看实例的matchedByValueMap 和(或) matchedByKeyMap 是否于预期一致', () => {
+    it('只向方法search传入参数searchStr, 其它参数不传', () => {
+        const instance =  new objNode(obj);
+        instance.search('ff', 'value');
+        console.log( instance.matchedByValueMap, 173173 );
     })
 });
 
@@ -327,9 +335,9 @@ describe('传入"e.x"作为构造函数中的路径字符串，并在方法getVa
 });
 
 describe('测试字符串outputStr', () => {
-    //测试方法handleByValue
+    //测试方法searchByValue
     const t1 = new objNode(obj, 'c', 'ff');
-    t1.handle();
+    t1.search();
     const outputStr1 = t1.getOutputMatched();
     console.log(outputStr1);
 
@@ -348,7 +356,7 @@ describe('测试字符串outputStr', () => {
     });
 
     const t2 = new objNode(obj, 'b', 'ff');
-    t2.handle();
+    t2.search();
     const outputStr2 = t2.getOutputMatched();
     console.log(outputStr2);
 
@@ -367,7 +375,7 @@ describe('测试字符串outputStr', () => {
     });
 
     const t3 = new objNode(obj, 'd', 'ff');
-    t3.handle();
+    t3.search();
     const outputStr3 = t3.getOutputMatched();
     console.log(outputStr3);
 
@@ -377,8 +385,6 @@ describe('测试字符串outputStr', () => {
             `eql(/\[d\]\[a\]/.test(outputStr3), true)`,
         )
     })
-
-    //测试方法handleByKey
 });
 
 describe('浅层测试获取新特性 Set 和 Map', () => {

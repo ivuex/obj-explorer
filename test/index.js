@@ -1,7 +1,5 @@
-const {
-    objNode
-} = require('..');
-const assert = require('simple-assert');
+const objExplorer = require('../');
+ const assert = require('simple-assert');
 const eql = require('deep-eql');
 const expect = require('chai').expect;
 const filterObj = require('filter-obj');
@@ -93,7 +91,7 @@ const obj = {
 
 describe('测试方法： search, searchByValue', () => {
     it('测试search不传参, 使用构造函数中的初始值(传入"value"作为排序依据sortseq), 执行 testByValueInstance1.search() 后 testByValueInstance1.matchedByValueMap 是否与预期一致', () => {
-        const testByValueInstance1 = new objNode(obj, 'd', 'ff', 'value');
+        const testByValueInstance1 = new objExplorer(obj, 'd', 'ff', 'value');
         testByValueInstance1.search();
         assert(eql(
             testByValueInstance1.matchedByValueMap,
@@ -106,7 +104,7 @@ describe('测试方法： search, searchByValue', () => {
     });
 
     it('测试search不传参, 使用构造函数中的初始值(不为sortSeq传值，将使用"value"作为默认的排序依据sortseq), 执行 testByValueInstance2.search() 后 testByValueInstance2.matchedByValueMap 是否与预期一致', () => {
-        const testByValueInstance2 = new objNode(obj, 'b', 'ff');
+        const testByValueInstance2 = new objExplorer(obj, 'b', 'ff');
         testByValueInstance2.search();
         assert(eql(
             testByValueInstance2.matchedByValueMap,
@@ -123,7 +121,7 @@ describe('测试方法： search, searchByValue', () => {
     });
 
     it('测试search不传参, 使用构造函数中的初始值(不为sortSeq传值，将使用"value"作为默认的排序依据sortseq), 执行 testByValueInstance2.search() 后 testByValueInstance2.matchedByValueMap 是否与预期一致', () => {
-        const testByValueInstance2 = new objNode(obj, 'b', 'ff', 'value');
+        const testByValueInstance2 = new objExplorer(obj, 'b', 'ff', 'value');
         testByValueInstance2.search();
         assert(eql(
             testByValueInstance2.matchedByValueMap,
@@ -143,7 +141,7 @@ describe('测试方法： search, searchByValue', () => {
 
 describe('测试方法： search, searchByKey', () => {
     it('测试search不传参, 使用构造函数中的初始值(传入"key"作为排序依据sortSeq), 执行 testByKeyInstance1.search() 后 testByKeyInstance1.matchedByKeyMap 是否与预期一致', () => {
-        const testByKeyInstance1 = new objNode(obj, 'f', 'ff', 'key');
+        const testByKeyInstance1 = new objExplorer(obj, 'f', 'ff', 'key');
         testByKeyInstance1.search();
         assert(eql(
             testByKeyInstance1.matchedByKeyMap,
@@ -165,8 +163,13 @@ describe('测试方法： search, searchByKey', () => {
     })
 });
 
+<<<<<<< HEAD:test/getValue.js
 describe('new一个实例instance=new objNode(obj), 测试方法search， 分别传入searchStr, sortSeq, 看实例的matchedByValueMap 和(或) matchedByKeyMap 是否于预期一致', () => {
     const instance = new objNode(obj);
+=======
+describe('new一个实例instance=new objExplorer(obj), 测试方法search， 分别传入searchStr, sortSeq, 看实例的matchedByValueMap 和(或) matchedByKeyMap 是否于预期一致', () => {
+    const instance = new objExplorer(obj);
+>>>>>>> tmp:test/index.js
 
     it('只向方法search传入字符串"ff"作为参数searchStr, 其它参数不传', () => {
         instance.search('ff');
@@ -212,8 +215,13 @@ describe('new一个实例instance=new objNode(obj), 测试方法search， 分别
         instance.search('ff', 'key');
         // console.log( instance.matchedByKeyMap, 213213 );
         // console.log(instance.oPathHistorySet, 214214);
+<<<<<<< HEAD:test/getValue.js
         console.log( instance.matchedByKeyMap, 215215 ); //Map {} 为什么会为空 Map?
         console.log(instance.oPathHistorySet, 214214); //正确的， 这是Set, 是查找历史. //从这里看不像是异步造成的。
+=======
+        // console.log( instance.matchedByKeyMap, 215215 );
+        // console.log(instance.oPathHistorySet, 214214);
+>>>>>>> tmp:test/index.js
         assert(eql(
             instance.matchedByKeyMap,
             new Map([
@@ -249,7 +257,7 @@ describe('测试"filter-obj"', () => {
 });
 
 describe('测试 方法genPathKeyAry方法 和 方法getValue', () => {
-    const t1 = new objNode(obj);
+    const t1 = new objExplorer(obj);
     const ctx = {
         k0: '0'
     };
@@ -314,8 +322,8 @@ describe('测试 方法genPathKeyAry方法 和 方法getValue', () => {
 });
 
 describe('根据对象点表示法，获取对应的值的测试', () => {
-    it(`new objNode(obj, 'a').getValue() 应该递归等于{ ary: [0, 1], obj: {a: 1, b: 2}, }`, () => {
-        const t1 = new objNode(obj, 'a');
+    it(`new objExplorer(obj, 'a').getValue() 应该递归等于{ ary: [0, 1], obj: {a: 1, b: 2}, }`, () => {
+        const t1 = new objExplorer(obj, 'a');
         const resValue = t1.getValue();
         assert(
             eql(resValue, {
@@ -329,29 +337,29 @@ describe('根据对象点表示法，获取对应的值的测试', () => {
 
 describe('当构造函数中的 路径参数 和 被搜索字符串参数 不传或者非严格等于false 的测试', () => {
     it(`不传路径参数 和 被搜索字符串`, () => {
-        const t1 = new objNode(obj);
+        const t1 = new objExplorer(obj);
         const resValue = t1.getValue();
-        assert(eql(resValue, obj), `eql(new objNode(obj).getValue(), obj)`);
+        assert(eql(resValue, obj), `eql(new objExplorer(obj).getValue(), obj)`);
     });
     it(`传入路径参数 不传入被搜索字符串`, () => {
-        const t1 = new objNode(obj, 's');
+        const t1 = new objExplorer(obj, 's');
         const resValue = t1.getValue();
-        assert(eql(resValue, 'abc'), `eql(new objNode(obj).getValue(), 'abc'`);
+        assert(eql(resValue, 'abc'), `eql(new objExplorer(obj).getValue(), 'abc'`);
     });
     it(`传入null作为路径参数 并传入被搜索字符串参数`, () => {
-        const t1 = new objNode(obj, null, 'ff');
+        const t1 = new objExplorer(obj, null, 'ff');
         const resValue = t1.getValue();
-        assert(eql(resValue, obj), `eql(new objNode(obj).getValue(), obj)`);
+        assert(eql(resValue, obj), `eql(new objExplorer(obj).getValue(), obj)`);
     });
     it(`传入空字符串作为路径参数 并传入被搜索字符串参数`, () => {
-        const t1 = new objNode(obj, '', 'ff');
+        const t1 = new objExplorer(obj, '', 'ff');
         const resValue = t1.getValue();
-        assert(eql(resValue, obj), `eql(new objNode(obj).getValue(), obj)`);
+        assert(eql(resValue, obj), `eql(new objExplorer(obj).getValue(), obj)`);
     });
 });
 
 describe('传入"e.x"作为构造函数中的路径字符串，并在方法getValue中传入字符串作为后面的路径字符串参数， 获得以obj为上下文,路径为以上两个路径字符串组合后的路径，并测试获取到的对应的值。', () => {
-    const t1 = new objNode(obj, 'e.x');
+    const t1 = new objExplorer(obj, 'e.x');
     it(`向实例t1的方法getValue中传入路径"a"作为参数，并测试是否获得正确的值`,
         () => {
             assert(
@@ -397,7 +405,7 @@ describe('传入"e.x"作为构造函数中的路径字符串，并在方法getVa
 
 describe('测试字符串outputStr', () => {
     //测试方法searchByValue
-    const t1 = new objNode(obj, 'c', 'ff');
+    const t1 = new objExplorer(obj, 'c', 'ff');
     t1.search();
     const outputStr1 = t1.getOutputMatched();
     console.log(outputStr1);
@@ -416,7 +424,7 @@ describe('测试字符串outputStr', () => {
         )
     });
 
-    const t2 = new objNode(obj, 'b', 'ff');
+    const t2 = new objExplorer(obj, 'b', 'ff');
     t2.search();
     const outputStr2 = t2.getOutputMatched();
     console.log(outputStr2);
@@ -435,7 +443,7 @@ describe('测试字符串outputStr', () => {
         )
     });
 
-    const t3 = new objNode(obj, 'd', 'ff');
+    const t3 = new objExplorer(obj, 'd', 'ff');
     t3.search();
     const outputStr3 = t3.getOutputMatched();
     console.log(outputStr3);
@@ -449,7 +457,7 @@ describe('测试字符串outputStr', () => {
 });
 
 describe('浅层测试获取新特性 Set 和 Map', () => {
-    const t1 = new objNode(obj);
+    const t1 = new objExplorer(obj);
     it(`分别测试 t1.getValue("newFeature.set"), t1.getValue("newFeature.map"), t1.getValue("newFeature")`, () => {
         const targetSet = new Set([66, 88]);
         const targetMap = new Map([

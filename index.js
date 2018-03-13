@@ -1,4 +1,4 @@
-class objNode {
+class objExplorer {
     //构造函数中的oPath参数 不支持 中括号字符串 预引用变量, 如有需要可以不传， 在后面的oPath中以这种方式传入;
     constructor(oRoot,
                 oPath = '',
@@ -90,25 +90,25 @@ class objNode {
         }
     }
 
-    travelAry(tmpKeyAry, ary, searchStr) {
+    travelAry(tmpKeyAry, ary, searchStr, sortSeq) {
         ary.forEach((item, key) => {
             tmpKeyAry.push(key);
-            this.search(searchStr, null,  tmpKeyAry, item);
+            this.search(searchStr, sortSeq,  tmpKeyAry, item);
             tmpKeyAry.pop();
         })
     }
 
-    travelObj(tmpKeyAry, obj, searchStr) {
+    travelObj(tmpKeyAry, obj, searchStr, sortSeq) {
         const keys = Object.keys(obj);
         keys.forEach((key) => {
             const item = obj[key];
             tmpKeyAry.push(key);
-            this.search(searchStr, null, tmpKeyAry, item);
+            this.search(searchStr, sortSeq, tmpKeyAry, item);
             tmpKeyAry.pop();
         })
     }
 
-    searchByValue(tmpKeyAry, item, searchStr) {
+    searchByValue(tmpKeyAry, item, searchStr, sortSeq) {
         const joinedTmpKey = tmpKeyAry.map(x => `[${x}]`).join('')
         this.searchHistoryRecord(joinedTmpKey);
         switch (this.getType(item)) {
@@ -128,23 +128,23 @@ class objNode {
                 }
                 break;
             case 'Array':
-                this.travelAry(tmpKeyAry, item, searchStr);
+                this.travelAry(tmpKeyAry, item, searchStr, sortSeq);
                 break;
             case 'Object':
-                this.travelObj(tmpKeyAry, item, searchStr);
+                this.travelObj(tmpKeyAry, item, searchStr, sortSeq);
                 break;
             case 'default':
                 return void 0;
         }
     }
 
-    searchByKey(tmpKeyAry, item, searchStr) {
+    searchByKey(tmpKeyAry, item, searchStr, sortSeq) {
         // console.log('method searchByKey executed, 142142');
         // console.log(arguments[2], 143143);
         // console.log(arguments.callee.caller, 144);
         const joinedTmpKey = tmpKeyAry.map(x => `[${x}]`).join('')
         if (this.checkStrIfMatch(joinedTmpKey, searchStr)) {
-            console.log(joinedTmpKey, 148148);
+            // console.log(joinedTmpKey, 148148);
             this.matchedByKeyMap.set(
                 joinedTmpKey,
                 item
@@ -154,15 +154,16 @@ class objNode {
         this.searchHistoryRecord(joinedTmpKey);
         switch (this.getType(item)) {
             case 'Array':
-                this.travelAry(tmpKeyAry, item, searchStr);
+                this.travelAry(tmpKeyAry, item, searchStr, sortSeq);
                 break;
             case 'Object':
-                this.travelObj(tmpKeyAry, item, searchStr);
+                this.travelObj(tmpKeyAry, item, searchStr, sortSeq);
                 break;
         }
     }
 
 
+    //方法search是要暴露给最终用户的方法， 参数searchStr和sortSeq是让最终用户传入的， 所以定义函数时排在arguments李彪的前面
     search(searchStr = this.searchStr, sortSeq = this.sortSeq, tmpKeyAry = this.oPathAry, item = this.getValue()) {
         if (searchStr == null) searchStr = this.searchStr;
         if (sortSeq == null) sortSeq = this.sortSeq;
@@ -170,11 +171,11 @@ class objNode {
         if (item == null) item = this.getValue; //item 可传入null占位
         switch (sortSeq) {
             case 'key':
-                this.searchByKey(tmpKeyAry, item, searchStr);
+                this.searchByKey(tmpKeyAry, item, searchStr, sortSeq);
                 break;
             case 'value':
             default:
-                this.searchByValue(tmpKeyAry, item, searchStr);
+                this.searchByValue(tmpKeyAry, item, searchStr, sortSeq);
                 break;
         }
     }
@@ -203,6 +204,17 @@ class objNode {
     }
 }
 
-module.exports = {
-    objNode
-};
+(function(global,factory){
+    if(typeof define === 'function' && define.amd){
+        define(function(){
+            return factory();
+        });
+    }else if(typeof module !== 'undefined' && module.exports){
+        module.exports = factory();
+    }else{
+        global.KeyBoardNum = factory(global);
+    }
+}(typeof window !== 'undefined' ? window : this, function(){
+    return objExplorer;
+}));
+

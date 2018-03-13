@@ -1,7 +1,8 @@
 {
-  "name": "json-search.repo",
-  "version": "1.0.0",
-  "description": "",
+  "name": "obj-explorer",
+  "version": "1.0.2",
+  "description": "这是用来递归搜索大对象的工具包, 可用来(不限于)在vuex,redux的大对象中，递归地按键名或按键值搜索.",
+  "homepage": "https://github.com/ivuex/obj-explorer",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

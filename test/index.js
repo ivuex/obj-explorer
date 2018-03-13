@@ -163,13 +163,8 @@ describe('测试方法： search, searchByKey', () => {
     })
 });
 
-<<<<<<< HEAD:test/getValue.js
-describe('new一个实例instance=new objNode(obj), 测试方法search， 分别传入searchStr, sortSeq, 看实例的matchedByValueMap 和(或) matchedByKeyMap 是否于预期一致', () => {
-    const instance = new objNode(obj);
-=======
 describe('new一个实例instance=new objExplorer(obj), 测试方法search， 分别传入searchStr, sortSeq, 看实例的matchedByValueMap 和(或) matchedByKeyMap 是否于预期一致', () => {
     const instance = new objExplorer(obj);
->>>>>>> tmp:test/index.js
 
     it('只向方法search传入字符串"ff"作为参数searchStr, 其它参数不传', () => {
         instance.search('ff');
@@ -215,13 +210,8 @@ describe('new一个实例instance=new objExplorer(obj), 测试方法search， �
         instance.search('ff', 'key');
         // console.log( instance.matchedByKeyMap, 213213 );
         // console.log(instance.oPathHistorySet, 214214);
-<<<<<<< HEAD:test/getValue.js
-        console.log( instance.matchedByKeyMap, 215215 ); //Map {} 为什么会为空 Map?
-        console.log(instance.oPathHistorySet, 214214); //正确的， 这是Set, 是查找历史. //从这里看不像是异步造成的。
-=======
         // console.log( instance.matchedByKeyMap, 215215 );
         // console.log(instance.oPathHistorySet, 214214);
->>>>>>> tmp:test/index.js
         assert(eql(
             instance.matchedByKeyMap,
             new Map([
